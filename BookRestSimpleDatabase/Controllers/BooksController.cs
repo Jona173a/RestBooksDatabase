@@ -75,6 +75,23 @@ namespace BookRestSimpleDatabase.Controllers
             }
         }
 
+        // DELETE: api/ApiWithActions/5
+        [HttpDelete("{id}")]
+        public int Delete(int id)
+        {
+            const string deleteString = "delete from book where id=@id";
+            using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
+            {
+                databaseConnection.Open();
+                using (SqlCommand insertCommand = new SqlCommand(deleteString, databaseConnection))
+                {
+                    insertCommand.Parameters.AddWithValue("@id", id);
+                    int rowsAffected = insertCommand.ExecuteNonQuery();
+                    return rowsAffected;
+                }
+            }
+        }
+
         // POST: api/Books
         [HttpPost]
         public void Post([FromBody] string value)
@@ -87,10 +104,6 @@ namespace BookRestSimpleDatabase.Controllers
         {
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+       
     }
 }
