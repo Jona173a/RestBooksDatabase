@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using BookRestSimpleDatabase.model;
@@ -94,8 +95,22 @@ namespace BookRestSimpleDatabase.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public void Post([FromBody] string value)
+        public int Post([FromBody] Book value)
         {
+            const string insertStudent = "insert into book (title, author, publisher, price) values (@title, @author, @publisher, @price)";
+            using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
+            {
+                databaseConnection.Open();
+                using (SqlCommand insertCommand = new SqlCommand(insertStudent, databaseConnection))
+                {
+                    insertCommand.Parameters.AddWithValue("@title", value.Title);
+                    insertCommand.Parameters.AddWithValue("@author", value.Author);
+                    insertCommand.Parameters.AddWithValue("@publisher", value.Publisher);
+                    insertCommand.Parameters.AddWithValue("@price", value.Price);
+                    int rowsAffected = insertCommand.ExecuteNonQuery();
+                    return rowsAffected;
+                }
+            }
         }
 
         // PUT: api/Books/5
@@ -104,6 +119,6 @@ namespace BookRestSimpleDatabase.Controllers
         {
         }
 
-       
+
     }
 }
