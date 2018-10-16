@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using BookRestSimpleDatabase.model;
@@ -37,7 +36,7 @@ namespace BookRestSimpleDatabase.Controllers
             }
         }
 
-        private Book ReadBook(IDataRecord reader)
+        private static Book ReadBook(IDataRecord reader)
         {
             int id = reader.GetInt32(0);
             string title = reader.IsDBNull(1) ? null : reader.GetString(1);
@@ -80,11 +79,11 @@ namespace BookRestSimpleDatabase.Controllers
         [HttpDelete("{id}")]
         public int Delete(int id)
         {
-            const string deleteString = "delete from book where id=@id";
+            const string deleteStatement = "delete from book where id=@id";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
             {
                 databaseConnection.Open();
-                using (SqlCommand insertCommand = new SqlCommand(deleteString, databaseConnection))
+                using (SqlCommand insertCommand = new SqlCommand(deleteStatement, databaseConnection))
                 {
                     insertCommand.Parameters.AddWithValue("@id", id);
                     int rowsAffected = insertCommand.ExecuteNonQuery();
@@ -97,11 +96,11 @@ namespace BookRestSimpleDatabase.Controllers
         [HttpPost]
         public int Post([FromBody] Book value)
         {
-            const string insertStudent = "insert into book (title, author, publisher, price) values (@title, @author, @publisher, @price)";
+            const string insertString = "insert into book (title, author, publisher, price) values (@title, @author, @publisher, @price)";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
             {
                 databaseConnection.Open();
-                using (SqlCommand insertCommand = new SqlCommand(insertStudent, databaseConnection))
+                using (SqlCommand insertCommand = new SqlCommand(insertString, databaseConnection))
                 {
                     insertCommand.Parameters.AddWithValue("@title", value.Title);
                     insertCommand.Parameters.AddWithValue("@author", value.Author);
@@ -115,10 +114,24 @@ namespace BookRestSimpleDatabase.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public int Put(int id, [FromBody] Book value)
         {
+            const string updateString =
+                "update book set title=@title, author=@author, publisher=@publisher, price=@price where id=@id;";
+            using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
+            {
+                databaseConnection.Open();
+                using (SqlCommand updateCommand = new SqlCommand(updateString, databaseConnection))
+                {
+                    updateCommand.Parameters.AddWithValue("@title", value.Title);
+                    updateCommand.Parameters.AddWithValue("@author", value.Author);
+                    updateCommand.Parameters.AddWithValue("@publisher", value.Publisher);
+                    updateCommand.Parameters.AddWithValue("@price", value.Price);
+                    updateCommand.Parameters.AddWithValue("@id", id);
+                    int rowsAffected = updateCommand.ExecuteNonQuery();
+                    return rowsAffected;
+                }
+            }
         }
-
-
     }
 }
