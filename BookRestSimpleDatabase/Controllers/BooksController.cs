@@ -14,7 +14,7 @@ namespace BookRestSimpleDatabase.Controllers
 
         // GET: api/Books
         [HttpGet]
-        public IEnumerable<Book> Get()
+        public IEnumerable<Book> GetAllBooks()
         {
             const string selectString = "select * from book order by id";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
@@ -56,7 +56,7 @@ namespace BookRestSimpleDatabase.Controllers
 
         // GET: api/Books/5
         [Route("{id}")]
-        public Book Get(int id)
+        public Book GetBookById(int id)
         {
             const string selectString = "select * from book where id=@id";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
@@ -77,7 +77,7 @@ namespace BookRestSimpleDatabase.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public int Delete(int id)
+        public int DeleteBook(int id)
         {
             const string deleteStatement = "delete from book where id=@id";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
@@ -94,7 +94,7 @@ namespace BookRestSimpleDatabase.Controllers
 
         // POST: api/Books
         [HttpPost]
-        public int Post([FromBody] Book value)
+        public int AddBook([FromBody] Book value)
         {
             const string insertString = "insert into book (title, author, publisher, price) values (@title, @author, @publisher, @price)";
             using (SqlConnection databaseConnection = new SqlConnection(ConnectionString))
@@ -114,7 +114,7 @@ namespace BookRestSimpleDatabase.Controllers
 
         // PUT: api/Books/5
         [HttpPut("{id}")]
-        public int Put(int id, [FromBody] Book value)
+        public int UpdateBook(int id, [FromBody] Book value)
         {
             const string updateString =
                 "update book set title=@title, author=@author, publisher=@publisher, price=@price where id=@id;";
